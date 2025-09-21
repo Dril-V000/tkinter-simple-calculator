@@ -8,41 +8,36 @@ def delt():
     cal.delete(0, END)
 
 def add():
+    import re
     xx = cal.get()
-    try:
 
+    try:
         if xx.strip().lower() == "rick":
             webbrowser.open("https://www.youtube.com/watch?v=dQw4w9WgXcQ", new=2)
             cal.delete(0, END)
             cal.insert(0, "Enjoy 😏")
             return
+    except Exception:
+        pass
 
-        # Addition
-        if '+' in xx:
-            li = xx.split('+')
-            total = 0
-            for i in li:
-                total += int(i)
-            cal.delete(0, END)
-            cal.insert(0, total)
+    expr = xx.replace('x', '*').replace('×', '*').replace('÷', '/')
 
-        # Subtraction
-        elif '-' in xx:
-            li = xx.split('-')
-            total = int(li[0])
-            for i in li[1:]:
-                total -= int(i)
-            cal.delete(0, END)
-            cal.insert(0, total)
-
-
-        else:
-            cal.delete(0, END)
-            cal.insert(0, xx)
-
-    except ValueError:
+    if not re.fullmatch(r"[0-9+\-*/().\s]+", expr):
         cal.delete(0, END)
         cal.insert(0, "Error")
+        return
+
+    try:
+        result = eval(expr, {"__builtins__": None}, {})
+        if isinstance(result, float) and result.is_integer():
+            result = int(result)
+        cal.delete(0, END)
+        cal.insert(0, str(result))
+    except Exception:
+        cal.delete(0, END)
+        cal.insert(0, "Error")
+
+
 
 
 cw = Tk()
@@ -77,12 +72,16 @@ btn0.place(x=10, y=320)
 
 btnx = Button(text='+', font='Arial 19 bold', bg='lightgreen', height='1', bd=10, padx=10, pady=5, command=lambda: getnum('+'))
 btnx.place(x=235, y=60)
-btnminus = Button(text='-', font='Arial 19 bold', bg='pink', bd=10, padx=10, pady=5, command=lambda: getnum('-'))
+btnminus = Button(text='- ', font='Arial 19 bold', bg='pink', bd=10, padx=10, pady=5, command=lambda: getnum('-'))
 btnminus.place(x=235, y=145)
 
-btnc = Button(text='C', font='Arial 19 bold', bg='crimson', height='1', width=8, bd=10, command=delt)
+btnc = Button(text='C', font='Arial 19 bold', bg='crimson', height='1', width=2, bd=10,  padx=10, pady=4, command=delt)
 btnc.place(x=85, y=320)
-btne = Button(text='=', font='Arial 19 bold', bg='khaki', height='4', bd=10, padx=10, pady=5, command=add)
-btne.place(x=235, y=230)
+btnxxx = Button(text='÷', font='Arial 19 bold', bg='purple', height='1', bd=10,  padx=10, pady=4, command=lambda : getnum('÷'))
+btnxxx.place(x=160, y=320)
+btne = Button(text='=', font='Arial 19 bold', bg='khaki',  bd=10, padx=10, pady=5, command=add)
+btne.place(x=235, y=320)
+btnex = Button(text='x', font='Arial 19 bold', bg='blue', bd=10, padx=10, pady=5, command=lambda : getnum('x'))
+btnex.place(x=235, y=230)
 
 cw.mainloop()
